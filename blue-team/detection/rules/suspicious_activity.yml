@@ -1,0 +1,44 @@
+# Blue Team Detection Rules
+# SIEM Rules for Elasticsearch/Kibana
+# Students must complete and refine these detection rules
+
+---
+# SQL INJECTION DETECTION RULES
+
+- name: "SQL Injection Detection - Search Parameter"
+  description: Detects potential SQL injection attempts
+  type: query
+  index: "logs-*"
+  severity: high
+  enabled: true
+  pattern:
+    - "http.request.query_string : (* OR * = * -- * UNION *)"
+
+- name: "SQL Injection Detection - Category"
+  description: Detects SQL injection in category parameter
+  type: query
+  severity: high
+  enabled: true
+
+# BRUTE FORCE DETECTION
+
+- name: "Brute Force Attack Detection"
+  description: Detects multiple failed login attempts
+  type: threshold
+  severity: high
+  enabled: true
+
+# JWT ATTACK DETECTION
+
+- name: "JWT None Algorithm Attack"
+  description: Detects JWT tokens using 'none' algorithm
+  type: query
+  severity: critical
+  enabled: true
+
+# Global Settings
+global:
+  alert_channel:
+    - "elasticsearch"
+    - "slack"
+  retention_days: 90
