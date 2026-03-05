@@ -1,0 +1,23 @@
+{
+  "name": "secureshop-backend",
+  "version": "1.0.0",
+  "description": "SecureShop Backend API",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "sqlite3": "^5.1.7",
+    "mysql2": "^3.6.5",
+    "mongoose": "^8.0.3",
+    "redis": "^4.6.12",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "dotenv": "^16.3.1"
+  }
+}
