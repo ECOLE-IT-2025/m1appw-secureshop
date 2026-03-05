@@ -1,0 +1,117 @@
+# M1 APPW SecureShop - Docker Compose
+# Main application stack
+
+version: '3.8'
+
+services:
+  backend:
+    build: ../../secureshop-app/backend
+    container_name: secureshop-backend
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=secureshop
+      - DB_PASSWORD=secureshop_pass
+      - DB_NAME=secureshop
+      - MONGO_URI=mongodb://mongo:27017/secureshop
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mysql
+      - mongo
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    build: ../../secureshop-app/frontend
+    container_name: secureshop-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: secureshop-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: secureshop-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: secureshop
+      MYSQL_USER: secureshop
+      MYSQL_PASSWORD: secureshop_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../../secureshop-app/database/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7.0
+    container_name: secureshop-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ../../secureshop-app/database/mongodb/init.js:/docker-entrypoint-initdb.d/init.js
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: secureshop-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: secureshop-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  mongo_data:
+  redis_data:
+  grafana_data:
