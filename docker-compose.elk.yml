@@ -1,18 +1,14 @@
 # M1 APPW SecureShop - ELK Stack (Elasticsearch, Logstash, Kibana)
-# Blue Team: Log collection, storage, and analysis
-# TODO: Students must complete the configuration
+# Monitoring and logging infrastructure for security analysis
 
 version: '3.8'
 
 services:
-  # Elasticsearch - Distributed search and analytics engine
-  # TODO: Configure authentication and encryption
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     container_name: elk-elasticsearch
     environment:
       - discovery.type=single-node
-      # SECURITY TODO: Enable xpack.security
       - xpack.security.enabled=false
       - xpack.security.enrollment.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -29,15 +25,10 @@ services:
       timeout: 10s
       retries: 120
 
-  # Logstash - Log processing and transformation
-  # TODO: Configure input plugins for nginx, application logs
   logstash:
     image: docker.elastic.co/logstash/logstash:8.11.0
     container_name: elk-logstash
     volumes:
-      # TODO: Create and mount logstash configuration files
-      # - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      # - ./logstash/pipeline/:/usr/share/logstash/pipeline:ro
       - logstash_data:/usr/share/logstash/data
     environment:
       - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
@@ -50,10 +41,7 @@ services:
         condition: service_healthy
     networks:
       - elk-network
-    # TODO: Configure restart policy and logging
 
-  # Kibana - Data visualization and exploration platform
-  # TODO: Configure index patterns and dashboards
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.0
     container_name: elk-kibana
@@ -61,12 +49,9 @@ services:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      # SECURITY TODO: Enable Kibana authentication
       - XPACK_SECURITY_ENABLED=false
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=ChangeMeToAtLeast32Characters!
     volumes:
-      # TODO: Mount Kibana configuration
-      # - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
       - kibana_data:/usr/share/kibana/data
     depends_on:
       - elasticsearch
@@ -78,15 +63,11 @@ services:
       timeout: 10s
       retries: 120
 
-  # Filebeat - Lightweight log shipper
-  # TODO: Configure to collect nginx and application logs
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.11.0
     container_name: elk-filebeat
     user: root
     volumes:
-      # TODO: Create filebeat configuration
-      # - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
@@ -96,17 +77,12 @@ services:
     networks:
       - elk-network
     command: filebeat -e -strict.perms=false
-    # TODO: Add health checks
 
-  # Metricbeat - Metrics collection
-  # TODO: Configure system and service metrics collection
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:8.11.0
     container_name: elk-metricbeat
     user: root
     volumes:
-      # TODO: Create metricbeat configuration
-      # - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /proc:/hostfs/proc:ro
@@ -118,7 +94,6 @@ services:
     networks:
       - elk-network
     command: metricbeat -e -strict.perms=false
-    # TODO: Add health checks
 
 networks:
   elk-network:
