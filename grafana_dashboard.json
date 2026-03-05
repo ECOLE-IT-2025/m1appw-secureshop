@@ -1,0 +1,11 @@
+{
+  "dashboard": {
+    "title": "SecureShop - Security Dashboard",
+    "description": "TODO: Configurer les panels de monitoring sécurité",
+    "panels": [],
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    }
+  }
+}
