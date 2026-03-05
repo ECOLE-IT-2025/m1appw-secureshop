@@ -1,0 +1,14 @@
+# Règles de détection - SecureShop SIEM
+# Objectif : Définir les règles pour détecter les activités suspectes
+# 
+# Format de règle :
+#   - name: Nom de la règle
+#     description: Description
+#     condition: Condition de détection
+#     severity: low|medium|high|critical
+#     action: Action à prendre
+#
+# TODO: Implémenter les règles de détection
+# Consultez la documentation ELK/SIEM pour le format des règles
+
+rules: []
